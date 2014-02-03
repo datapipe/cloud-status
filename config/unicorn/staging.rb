@@ -2,7 +2,7 @@ worker_processes 5
 preload_app true
 listen '/var/unicorn/unicorn.sock'
 pid '/var/unicorn/unicorn.pid'
-working_directory '/srv/app/current'
+working_directory '/var/www/cloud-status'
 
 # timeout any workers that haven't responded in 30 seconds
 timeout 30

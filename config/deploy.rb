@@ -44,7 +44,6 @@ set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public
 
 before 'deploy', 'rvm1:install:rvm'
 before 'deploy', 'rvm1:install:ruby'
-after 'deploy', 'unicorn:reload'
 
 namespace :unicorn do
   desc 'Start the Unicorn processes'
@@ -78,5 +77,8 @@ namespace :unicorn do
     end
   end
 end
+
+after 'deploy', 'unicorn:reload'
+
 
 
