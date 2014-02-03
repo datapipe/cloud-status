@@ -15,6 +15,9 @@ set :branch, fetch(:branch, "master")
 # Default deploy_to directory is /var/www/app-name
 set :deploy_to, '/var/www/cloud-status'
 
+set :unicorn_config, 'config/unicorn/staging.rb'
+set :unicorn_pid, '/var/unicorn/unicorn.pid'
+
 # Default value for :scm is :git
 # set :scm, :git
 
@@ -41,26 +44,39 @@ set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public
 
 before 'deploy', 'rvm1:install:rvm'
 before 'deploy', 'rvm1:install:ruby'
+after 'deploy', 'unicorn:reload'
 
-namespace :deploy do
-
-  desc 'Restart application'
-  task :restart do
-    on roles(:app), in: :sequence, wait: 5 do
-      # Your restart mechanism here, for example:
-      # execute :touch, release_path.join('tmp/restart.txt')
+namespace :unicorn do
+  desc 'Start the Unicorn processes'
+  task :start do
+    on roles(:app) do
+      within current_path do
+        with rails_env: fetch(:rails_env) do
+          execute :bundle, "exec unicorn -c #{fetch(:unicorn_config)} -D"
+        end
+      end
     end
   end
 
-  after :publishing, :restart
-
-  after :restart, :clear_cache do
-    on roles(:web), in: :groups, limit: 3, wait: 10 do
-      # Here we can do anything such as:
-      # within release_path do
-      #   execute :rake, 'cache:clear'
-      # end
+  desc 'Stop the Unicorn processes'
+  task :stop do
+    on roles(:app) do
+      if test("[ -f #{fetch(:unicorn_pid)} ]")
+        execute :kill, capture(:cat, fetch(:unicorn_pid))
+      end
     end
   end
 
+  desc 'Restart the Unicorn processes'
+  task :reload do
+    on roles(:app) do
+      if test("[ -f #{fetch(:unicorn_pid)} ]")
+        execute :kill, '-s USR2', capture(:cat, fetch(:unicorn_pid))
+      else
+        error 'Unicorn process not running'
+      end
+    end
+  end
 end
+
+
