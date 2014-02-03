@@ -1,14 +1,18 @@
+APP_PATH = '/var/www/cloud-status'
+SHARED_PATH = "#{APP_PATH}/shared"
+CURRENT_PATH = "#{APP_PATH}/current"
+
 worker_processes 5
 preload_app true
-listen '/var/unicorn/unicorn.sock'
-pid '/var/unicorn/unicorn.pid'
-working_directory '/var/www/cloud-status/current'
+listen "#{SHARED_PATH}/tmp/sockets/unicorn.sock"
+pid "#{SHARED_PATH}/tmp/pids/unicorn.pid"
+working_directory CURRENT_PATH
 
 # timeout any workers that haven't responded in 30 seconds
 timeout 30
 
-stderr_path "/var/unicorn/unicorn.stderr.log"
-stdout_path "/var/unicorn/unicorn.stdout.log"
+stderr_path "#{SHARED_PATH}/log/unicorn.stderr.log"
+stdout_path "#{SHARED_PATH}/log/unicorn.stdout.log"
 
 before_fork do |server, worker|
   defined?(ActiveRecord::Base) and ActiveRecord::Base.connection.disconnect!
@@ -22,7 +26,7 @@ before_fork do |server, worker|
 end
 
 before_exec do |server|
-  ENV['BUNDLE_GEMFILE'] = "/srv/app/current/Gemfile"
+  ENV['BUNDLE_GEMFILE'] = "#{CURRENT_PATH}/Gemfile"
 end
 
 after_fork do |server, worker|
