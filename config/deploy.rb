@@ -15,8 +15,8 @@ set :branch, fetch(:branch, "master")
 # Default deploy_to directory is /var/www/app-name
 set :deploy_to, '/var/www/cloud-status'
 
-set :unicorn_config, 'config/unicorn/staging.rb'
-set :unicorn_pid, '/var/unicorn/unicorn.pid'
+set :unicorn_config, "#{fetch(:deploy_to)}/current/config/unicorn/staging.rb"
+set :unicorn_pid, "#{fetch(:deploy_to)}/shared/pids/unicorn.pid"
 
 # Default value for :scm is :git
 # set :scm, :git
