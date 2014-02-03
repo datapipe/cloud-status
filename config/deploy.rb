@@ -1,11 +1,8 @@
 # config valid only for Capistrano 3.1
 lock '3.1.0'
 
-set :rvm_ruby_string, :local              # use the same ruby as used locally for deployment
-set :rvm_autolibs_flag, "read-only"       # more info: rvm help autolibs
-
-before 'deploy', 'rvm:install_rvm'  # install/update RVM
-before 'deploy', 'rvm:install_ruby' # install Ruby and create gemset (both if missing)
+#set :rvm_ruby_string, :local              # use the same ruby as used locally for deployment
+set :rvm_ruby_string 'ruby-2.0.0-p247@cloud-status'
 
 set :application, 'cloud-status'
 set :repo_url, 'git@github.com:datapipe/cloud-status.git'
@@ -39,6 +36,8 @@ set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public
 
 # Default value for keep_releases is 5
 # set :keep_releases, 5
+
+before 'deploy', 'rvm1:install:rvm'
 
 namespace :deploy do
 
