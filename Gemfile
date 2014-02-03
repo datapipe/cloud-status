@@ -40,8 +40,9 @@ gem 'unicorn'
 
 # Use Capistrano for deployment
 group :development do
-  gem 'capistrano', '~> 3.1', :github => 'capistrano/capistrano'
-  gem 'rvm1-capistrano3', :require => false, :github => 'florian-winddle/rvm1-capistrano3'
+  gem 'capistrano'
+  gem 'rvm1-capistrano3', require: false
+  gem 'capistrano-rvm'
   gem 'capistrano-bundler'
   gem 'capistrano-rails'
 end

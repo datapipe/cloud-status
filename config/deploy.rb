@@ -1,7 +1,11 @@
 # config valid only for Capistrano 3.1
 lock '3.1.0'
 
-set :rvm_ruby_string, :local
+set :rvm_ruby_string, :local              # use the same ruby as used locally for deployment
+set :rvm_autolibs_flag, "read-only"       # more info: rvm help autolibs
+
+before 'deploy', 'rvm:install_rvm'  # install/update RVM
+before 'deploy', 'rvm:install_ruby' # install Ruby and create gemset (both if missing)
 
 set :application, 'cloud-status'
 set :repo_url, 'git@github.com:datapipe/cloud-status.git'
@@ -9,8 +13,8 @@ set :repo_url, 'git@github.com:datapipe/cloud-status.git'
 # Default branch is :master
 ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 
-# Default deploy_to directory is /var/www/cloud-status
-# set :deploy_to, '/srv/app'
+# Default deploy_to directory is /var/www/app-name
+set :deploy_to, '/var/www/cloud-status'
 
 # Default value for :scm is :git
 # set :scm, :git
