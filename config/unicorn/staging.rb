@@ -42,7 +42,7 @@ after_fork do |server, worker|
       Process::UID.change_privilege(target_uid)
     end
     defined?(ActiveRecord::Base) and ActiveRecord::Base.establish_connection
-    Rails.cache.reconnect
+    Rails.cache.reconnect if Rails.cache.respond_to?(:reconnect)
   rescue => e
     raise e
   end
